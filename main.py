@@ -61,4 +61,4 @@ for version in version_dict:
     version_dict[version] = sorted(version_dict[version])
 
 with open('version_dict.json', 'w') as file_handle:
-    json.dump(version_dict, file_handle, indent=4)win
+    json.dump(version_dict, file_handle, indent=4)
