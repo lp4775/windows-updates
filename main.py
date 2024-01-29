@@ -49,16 +49,25 @@ for file_name in file_names:
         for key in dictionary:
             for windows_version in dictionary[key]["windowsVersions"]:
                 if windows_version not in version_dict:
-                    version_dict[windows_version] = set()
+                    version_dict[windows_version] = []
                 
                 updates = dictionary[key]["windowsVersions"][windows_version]
-                version_dict[windows_version].update(updates)
+                for update in updates:
+                    if "windowsVersionInfo" in dictionary[key]["windowsVersions"][windows_version][update].keys():
+                        release_date = dictionary[key]["windowsVersions"][windows_version][update]['windowsVersionInfo']['releaseDate']
+                    else:
+                        release_date = dictionary[key]["windowsVersions"][windows_version][update]['updateInfo']['releaseDate']
+                    
+                    update_tuple = (update, release_date)
+                    if update_tuple not in version_dict[windows_version]:
+                        version_dict[windows_version].append(update_tuple)
 
     delete_file(compressed_file)
     delete_file(json_file)
 
 for version in version_dict:
-    version_dict[version] = sorted(version_dict[version])
+    # Sorting by update name
+    version_dict[version] = sorted(version_dict[version], key=lambda x: x[0])
 
 with open('version_dict.json', 'w') as file_handle:
-    json.dump(version_dict, file_handle, indent=4)win
+    json.dump(version_dict, file_handle, indent=4)
